@@ -1,10 +1,10 @@
-const router = require('express').Router();
+const createRouter = require('express').Router();
 
-router.get('/', (req, res) => {
+createRouter.get('/', (req, res) => {
     res.render('Create', { title: 'Create Car Listing'});
 });
 
-router.post('/', async (req, res) => {
+createRouter.post('/', async (req, res) => {
     const car = {
         name: req.body.name,
         description: req.body.description,
@@ -18,5 +18,5 @@ router.post('/', async (req, res) => {
 
 
 module.exports = { 
-    router
+    createRouter
 };

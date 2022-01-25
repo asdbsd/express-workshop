@@ -11,7 +11,7 @@ const read = async () => {
         console.error(err);
         process.exit(1);
     }
-    
+
 }
 
 const write = async (data) => {
@@ -22,9 +22,8 @@ const write = async (data) => {
         console.error(err);
         process.exit(1);
     }
-    
-}
 
+}
 
 const createCar = async (car) => {
     let id;
@@ -45,41 +44,50 @@ const nextId = () => {
 
 const getAll = async (query) => {
     const data = await read();
-    let cars  = Object
-                .entries(data)
-                .map(([id, v]) => Object.assign({}, { id }, v));
+    let cars = Object
+        .entries(data)
+        .map(([id, v]) => Object.assign({}, { id }, v));
 
-    if(query.search) {
+
+    if (query.search) {
         cars = cars.filter(c => c.name.toLocaleLowerCase().includes(query.search.toLocaleLowerCase()));
     }
 
-    if(query.from) {
+    if (query.from) {
         cars = cars.filter(c => c.price >= Number(query.from));
     }
 
-    if(query.to) {
+    if (query.to) {
         cars = cars.filter(c => c.price <= Number(query.to));
     }
+
 
     return cars;
 }
 
 const getCar = async (id) => {
     const cars = await read();
-    const car = cars[id];
+    const car = cars.filter(car => car.id == id)[0];
 
-    if(car) {
+    if (car) {
         return Object.assign({}, { id }, car);
     } else {
         return undefined;
     }
 }
 
+const deleteCar = async (id) => {
+    let cars = await getAll({});
+    cars = cars.filter(car => car.id != id);
+    await write(cars);
+}
+
 const carsMiddleWare = (req, res, next) => {
     req.storage = {
         getAll,
         getCar,
-        createCar
+        createCar,
+        deleteCar
     };
     next();
 };
