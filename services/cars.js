@@ -14,21 +14,54 @@ const read = async () => {
     
 }
 
-const write = async(data) => {
+const write = async (data) => {
     try {
-        await fs.writeFile(filePath, JSON.stringify(data));
+        await fs.writeFile(filePath, JSON.stringify(data, null, 2));
     } catch (err) {
         console.error('Database read error');
         console.error(err);
         process.exit(1);
     }
+    
 }
 
-const getAll = async () => {
+
+const createCar = async (car) => {
+    let id;
+    const cars = await read();
+
+    do {
+        id = nextId();
+    } while (cars.hasOwnProperty(id));
+
+    cars[id] = car;
+
+    await write(cars);
+}
+
+const nextId = () => {
+    return 'xxxxxxxxx-xxxx'.replace(/x/g, () => (Math.random() * 16 | 0).toString(16));
+}
+
+const getAll = async (query) => {
     const data = await read();
-    return Object
-            .entries(data)
-            .map(([id, v]) => Object.assign({}, { id }, v));
+    let cars  = Object
+                .entries(data)
+                .map(([id, v]) => Object.assign({}, { id }, v));
+
+    if(query.search) {
+        cars = cars.filter(c => c.name.toLocaleLowerCase().includes(query.search.toLocaleLowerCase()));
+    }
+
+    if(query.from) {
+        cars = cars.filter(c => c.price >= Number(query.from));
+    }
+
+    if(query.to) {
+        cars = cars.filter(c => c.price <= Number(query.to));
+    }
+
+    return cars;
 }
 
 const getCar = async (id) => {
@@ -45,7 +78,8 @@ const getCar = async (id) => {
 const carsMiddleWare = (req, res, next) => {
     req.storage = {
         getAll,
-        getCar
+        getCar,
+        createCar
     };
     next();
 };

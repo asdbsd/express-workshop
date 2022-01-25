@@ -72,7 +72,7 @@ div.cube {
     display: inline-block;
     border: 1px solid #2b415433;
     background: white;
-    width: 23%;
+    width: 350px;
     vertical-align: top;
 }
 
@@ -199,7 +199,7 @@ input[type=submit]:hover {
 div.form {
     border-radius: 5px;
     padding: 20px;
-    width: 36%;
+    width: 300px;
     margin: auto;
 }
 
@@ -235,6 +235,11 @@ footer {
     text-align: center;
     color: white;
     font-size: 20px;
+}
+
+.description {
+    display: none;
+    padding: 10px;
 }
 
 /*Animations & Transitions

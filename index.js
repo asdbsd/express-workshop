@@ -3,7 +3,7 @@ const port = 3000;
 const hbs = require('express-handlebars');
 
 const { aboutController } = require('./controllers/aboutController');
-const { createController } = require('./controllers/createController');
+const { router } = require('./controllers/createController');
 const { detailsController } = require('./controllers/detailsController');
 const { homeController } = require('./controllers/homeController');
 const { errorController } = require('./controllers/errorController');
@@ -26,7 +26,9 @@ app.use(carsMiddleWare);
 app.get('/', homeController)
 app.get('/about', aboutController)
 app.get('/details/:id', detailsController);
-app.get('/create', createController)
+app.use('/create', router);
+
+
 app.get('/404', errorController);
 
 
