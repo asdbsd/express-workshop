@@ -2,14 +2,14 @@ const express = require('express');
 const port = 3000;
 const hbs = require('express-handlebars');
 
+const createRouter = require('./routers/createRouter');
+const deleteRouter = require('./routers/deleteRouter');
+const editRouter = require('./routers/editRouter');
+
 const { aboutController } = require('./controllers/aboutController');
-const { createRouter } = require('./controllers/createController');
 const { detailsController } = require('./controllers/detailsController');
 const { homeController } = require('./controllers/homeController');
 const { errorController } = require('./controllers/errorController');
-const { deleteRouter } = require('./controllers/deleteController');
-
-
 
 const carsMiddleWare = require('./services/cars');
 
@@ -29,7 +29,8 @@ app.get('/', homeController)
 app.get('/about', aboutController)
 app.get('/details/:id', detailsController);
 app.use('/create', createRouter);
-app.use('/delete', deleteRouter)
+app.use('/delete', deleteRouter);
+app.use('/edit', editRouter)
 
 
 app.get('/404', errorController);

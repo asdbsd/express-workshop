@@ -1,6 +1,7 @@
 <h1>Delete Listing</h1>
-{{#with car}}
+
 <div class="form">
+  {{#with car}}
   <form action="/delete/{{id}}" method="POST">
     <label for="name">Name</label>
     <input type="text" id="name" name="name" value="{{name}}" disabled>
@@ -12,5 +13,5 @@
     <input type="number" id="price" name="price" value="{{price}}" disabled>
     <input type="submit" value="Delete">
   </form>
+  {{/with}}
 </div>
-{{/with}}

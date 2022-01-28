@@ -1,10 +1,8 @@
-const createRouter = require('express').Router();
-
-createRouter.get('/', (req, res) => {
+const createIndex = (req, res) => {
     res.render('Create', { title: 'Create Car Listing'});
-});
+};
 
-createRouter.post('/', async (req, res) => {
+const createAction = async (req, res) => {
     const car = {
         name: req.body.name,
         description: req.body.description,
@@ -14,9 +12,10 @@ createRouter.post('/', async (req, res) => {
 
     await req.storage.createCar(car);
     res.redirect('/');
-});
+};
 
 
 module.exports = { 
-    createRouter
+    createIndex,
+    createAction
 };

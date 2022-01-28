@@ -26,14 +26,17 @@ const write = async (data) => {
 }
 
 const createCar = async (car) => {
-    let id;
     const cars = await read();
+    let id = nextId();
+    let carData = await getCar(id);
 
-    do {
+    while(carData) {
         id = nextId();
-    } while (cars.hasOwnProperty(id));
+        carData = await getCar(id);
+    }
 
-    cars[id] = car;
+    car.id = id
+    cars.push(car);
 
     await write(cars);
 }
@@ -76,10 +79,28 @@ const getCar = async (id) => {
     }
 }
 
+const editCar = async(car) => {
+    let cars = await read();
+    let carData = await getCar(car.id);
+
+    if(carData) {
+        cars = cars.map(vehicle => vehicle.id == car.id ? vehicle = car : vehicle);
+        await write(cars);
+    } else {
+        throw ReferenceError('No such ID in database');
+    }
+}
+
 const deleteCar = async (id) => {
-    let cars = await getAll({});
-    cars = cars.filter(car => car.id != id);
-    await write(cars);
+    let cars = await read();
+    const car = await getCar(id);
+
+    if(car) {
+        cars = cars.filter(car => car.id != id);
+        await write(cars);
+    } else {
+        throw ReferenceError('No such ID in database');
+    }
 }
 
 const carsMiddleWare = (req, res, next) => {
@@ -87,7 +108,8 @@ const carsMiddleWare = (req, res, next) => {
         getAll,
         getCar,
         createCar,
-        deleteCar
+        deleteCar,
+        editCar
     };
     next();
 };
