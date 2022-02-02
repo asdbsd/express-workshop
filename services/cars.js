@@ -1,4 +1,6 @@
 const fs = require('fs/promises');
+const { resourceLimits } = require('worker_threads');
+const Car = require('../models/Car');
 
 const filePath = './services/data.json'
 
@@ -26,64 +28,62 @@ const write = async (data) => {
 }
 
 const createCar = async (car) => {
-    const cars = await read();
-    let id = nextId();
-    let carData = await getCar(id);
-
-    while(carData) {
-        id = nextId();
-        carData = await getCar(id);
-    }
-
-    car.id = id
-    cars.push(car);
-
-    await write(cars);
+    const result = new Car(car);
+    await result.save();
 }
 
-const nextId = () => {
-    return 'xxxxxxxxx-xxxx'.replace(/x/g, () => (Math.random() * 16 | 0).toString(16));
+// const nextId = () => {
+//     return 'xxxxxxxxx-xxxx'.replace(/x/g, () => (Math.random() * 16 | 0).toString(16));
+// }
+
+const carViewModel = (car) => {
+    return {
+        id: car._id,
+        name: car.name,
+        description: car.description,
+        imageUrl: car.imageUrl,
+        price: car.price
+    }
 }
 
 const getAll = async (query) => {
-    const data = await read();
-    let cars = Object
-        .entries(data)
-        .map(([id, v]) => Object.assign({}, { id }, v));
-
+    const options = {};
 
     if (query.search) {
-        cars = cars.filter(c => c.name.toLocaleLowerCase().includes(query.search.toLocaleLowerCase()));
+        options.name = new RegExp(querySearch, 'i');
     }
 
     if (query.from) {
-        cars = cars.filter(c => c.price >= Number(query.from));
+        options.price = { $gte: Number(query.from) };
     }
 
     if (query.to) {
-        cars = cars.filter(c => c.price <= Number(query.to));
+        if(!options.price) {
+            options.price = {};
+        }
+        options.price.$lte = Number(query.to);
     }
 
+    const cars = await Car.find(options);
+    return cars.map(carViewModel);
 
-    return cars;
 }
 
 const getCar = async (id) => {
-    const cars = await read();
-    const car = cars.filter(car => car.id == id)[0];
+    const car = await Car.findById(id);
 
     if (car) {
-        return Object.assign({}, { id }, car);
+        return carViewModel(car);
     } else {
         return undefined;
     }
 }
 
-const editCar = async(car) => {
+const editCar = async (car) => {
     let cars = await read();
     let carData = await getCar(car.id);
 
-    if(carData) {
+    if (carData) {
         cars = cars.map(vehicle => vehicle.id == car.id ? vehicle = car : vehicle);
         await write(cars);
     } else {
@@ -95,7 +95,7 @@ const deleteCar = async (id) => {
     let cars = await read();
     const car = await getCar(id);
 
-    if(car) {
+    if (car) {
         cars = cars.filter(car => car.id != id);
         await write(cars);
     } else {

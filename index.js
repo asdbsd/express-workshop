@@ -1,6 +1,7 @@
 const express = require('express');
 const port = 3000;
 const hbs = require('express-handlebars');
+const initDb = require('./models/index');
 
 const createRouter = require('./routers/createRouter');
 const deleteRouter = require('./routers/deleteRouter');
@@ -13,27 +14,35 @@ const { errorController } = require('./controllers/errorController');
 
 const carsMiddleWare = require('./services/cars');
 
-const app = express();
 
-app.engine('.hbs', hbs.create({
-    extname: '.hbs'
-}).engine);
-app.set('view engine', '.hbs');
+const start = async () => {
+    await initDb();
+    
+    const app = express();
 
-
-app.use(express.urlencoded({ extended: true }));
-app.use('/static', express.static('static'));
-app.use(carsMiddleWare);
-
-app.get('/', homeController)
-app.get('/about', aboutController)
-app.get('/details/:id', detailsController);
-app.use('/create', createRouter);
-app.use('/delete', deleteRouter);
-app.use('/edit', editRouter)
+    app.engine('.hbs', hbs.create({
+        extname: '.hbs'
+    }).engine);
+    app.set('view engine', '.hbs');
 
 
-app.get('/404', errorController);
+    app.use(express.urlencoded({ extended: true }));
+    app.use('/static', express.static('static'));
+    app.use(carsMiddleWare);
+
+    app.get('/', homeController)
+    app.get('/about', aboutController)
+    app.get('/details/:id', detailsController);
+    app.use('/create', createRouter);
+    app.use('/delete', deleteRouter);
+    app.use('/edit', editRouter)
 
 
-app.listen(port, () => console.log(`Listening on port: ${port}`));
+    app.get('/404', errorController);
+
+
+    app.listen(port, () => console.log(`Listening on port: ${port}`));
+};
+
+
+start();
