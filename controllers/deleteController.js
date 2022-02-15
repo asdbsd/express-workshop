@@ -4,8 +4,13 @@ const deleteIndex = async (req, res) => {
 };
 
 const deleteAction = async(req,res) => {
-    await req.storage.deleteCar(req.params.id);
-    res.redirect('/');
+    try {
+        await req.storage.deleteCar(req.params.id);
+        res.redirect('/');
+    } catch(err) {
+        console.log('Attemted to delete non-existing car.')
+        res.redirect('/404');
+    }
 };
 
 module.exports = {

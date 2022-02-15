@@ -13,8 +13,14 @@ const editAction = async (req, res) => {
         price: Number(req.body.price)
     };
 
-    await req.storage.editCar(car);
-    res.redirect('/');
+    try {
+        await req.storage.editCar(car);
+        res.redirect('/');
+    } catch (err) {
+        console.log(err);
+        res.redirect('/404')
+    }
+
 };
 
 module.exports = {

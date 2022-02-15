@@ -1,4 +1,5 @@
 document.querySelector('#cars').addEventListener('click', onShowDescription);
+[...document.querySelectorAll('.description')].map(desc => desc.style.display = 'none');
 
 function onShowDescription(e) {
     if(e.target.classList.contains('more')) {

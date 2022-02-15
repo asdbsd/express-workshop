@@ -1,56 +1,18 @@
-const fs = require('fs/promises');
-const { resourceLimits } = require('worker_threads');
 const Car = require('../models/Car');
+const { carViewModel } = require('./util');
 
-const filePath = './services/data.json'
-
-const read = async () => {
-    try {
-        const file = await fs.readFile(filePath);
-        return JSON.parse(file);
-    } catch (err) {
-        console.error('Database read error');
-        console.error(err);
-        process.exit(1);
-    }
-
-}
-
-const write = async (data) => {
-    try {
-        await fs.writeFile(filePath, JSON.stringify(data, null, 2));
-    } catch (err) {
-        console.error('Database read error');
-        console.error(err);
-        process.exit(1);
-    }
-
-}
 
 const createCar = async (car) => {
-    const result = new Car(car);
+    const result = new Car(carViewModel(car));
     await result.save();
 }
 
-// const nextId = () => {
-//     return 'xxxxxxxxx-xxxx'.replace(/x/g, () => (Math.random() * 16 | 0).toString(16));
-// }
-
-const carViewModel = (car) => {
-    return {
-        id: car._id,
-        name: car.name,
-        description: car.description,
-        imageUrl: car.imageUrl,
-        price: car.price
-    }
-}
 
 const getAll = async (query) => {
     const options = {};
 
     if (query.search) {
-        options.name = new RegExp(querySearch, 'i');
+        options.name = new RegExp(query.search, 'i');
     }
 
     if (query.from) {
@@ -70,7 +32,7 @@ const getAll = async (query) => {
 }
 
 const getCar = async (id) => {
-    const car = await Car.findById(id);
+    const car = await Car.findById(id).populate('accessories');
 
     if (car) {
         return carViewModel(car);
@@ -80,27 +42,25 @@ const getCar = async (id) => {
 }
 
 const editCar = async (car) => {
-    let cars = await read();
-    let carData = await getCar(car.id);
+    let existing = await Car.findById(car.id);
 
-    if (carData) {
-        cars = cars.map(vehicle => vehicle.id == car.id ? vehicle = car : vehicle);
-        await write(cars);
-    } else {
-        throw ReferenceError('No such ID in database');
-    }
+    existing.name = car.name;
+    existing.description = car.description || undefined;
+    existing.imageUrl = car.imageUrl;
+    existing.price = Number(car.price);
+
+    await existing.save();
+}
+
+const attachAccessory = async (carId, accessoryId) => {
+    const existing = await Car.findById(carId);
+    existing.accessories.push(accessoryId);
+
+    await existing.save();
 }
 
 const deleteCar = async (id) => {
-    let cars = await read();
-    const car = await getCar(id);
-
-    if (car) {
-        cars = cars.filter(car => car.id != id);
-        await write(cars);
-    } else {
-        throw ReferenceError('No such ID in database');
-    }
+    await Car.findByIdAndDelete(id);
 }
 
 const carsMiddleWare = (req, res, next) => {
@@ -109,9 +69,15 @@ const carsMiddleWare = (req, res, next) => {
         getCar,
         createCar,
         deleteCar,
-        editCar
+        editCar,
+        attachAccessory
     };
     next();
 };
 
 module.exports = carsMiddleWare;
+
+
+// const nextId = () => {
+//     return 'xxxxxxxxx-xxxx'.replace(/x/g, () => (Math.random() * 16 | 0).toString(16));
+// }

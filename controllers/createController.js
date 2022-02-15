@@ -1,3 +1,5 @@
+const { redirect } = require("express/lib/response");
+
 const createIndex = (req, res) => {
     res.render('Create', { title: 'Create Car Listing'});
 };
@@ -10,8 +12,14 @@ const createAction = async (req, res) => {
         price: Number(req.body.price)
     };
 
-    await req.storage.createCar(car);
-    res.redirect('/');
+    try {
+        await req.storage.createCar(car);
+        res.redirect('/');
+    } catch (err) {
+        console.log('Error creating record');
+        redirect('/create')
+    }
+    
 };
 
 
