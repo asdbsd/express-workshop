@@ -1,10 +1,17 @@
+const { redirect } = require('express/lib/response');
 const Car = require('../models/Car');
 const { carViewModel } = require('./util');
 
 
 const createCar = async (car) => {
     const result = new Car(carViewModel(car));
-    await result.save();
+    try {
+        await result.save();
+
+    } catch(err) {
+        console.log(err);
+        redirect('/create');
+    }
 }
 
 

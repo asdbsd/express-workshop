@@ -11,11 +11,11 @@ const getAll = async () => {
     return data.map(accessoryViewModel);
 }
 
-
 const accessoryMiddleware = (req, res, next) => {
     req.accessory = {
         createAccessory,
-        getAll
+        getAll,
+
     }
     next();
 }

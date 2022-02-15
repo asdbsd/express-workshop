@@ -5,11 +5,13 @@ const createIndex = (req, res) => {
 };
 
 const createAction = async (req, res) => {
+    const userId = req.session.user.id;
     const car = {
         name: req.body.name,
         description: req.body.description,
         imageUrl: req.body.imageUrl,
-        price: Number(req.body.price)
+        price: Number(req.body.price),
+        owner: userId
     };
 
     try {
@@ -17,7 +19,7 @@ const createAction = async (req, res) => {
         res.redirect('/');
     } catch (err) {
         console.log('Error creating record');
-        redirect('/create')
+        res.redirect('/create')
     }
     
 };

@@ -1,15 +1,24 @@
-const res = require("express/lib/response");
+const getAction = async (req, res) => {
 
-const getAction = (req, res) => {
+    if(!req.session.hasOwnProperty('user')) {
+        return res.redirect('/login');
+    }
+
     res.render('createAccessory', { title: 'Create Accessory' });
 }
 
 const createAction = async (req, res) => {
+
+    if(!req.session.hasOwnProperty('user')) {
+        return res.redirect('/login');
+    }
+
     const accessory = {
         name: req.body.name,
         description: req.body.description || undefined,
         imageUrl: req.body.imageUrl,
-        price: Number(req.body.price)
+        price: Number(req.body.price),
+        owner: req.session.user.id
     };
 
     try {
@@ -37,7 +46,6 @@ const attachIndex = async (req, res) => {
         res.render('attach', { title: 'Attach Accessory', car, accessories: availableAccessories });
     } catch(err) {
         console.log('Error while searching coresponding car');
-        console.log(err.message);
         res.redirect('/404');
     }
     
@@ -47,6 +55,10 @@ const attachIndex = async (req, res) => {
 const attachCreate = async (req, res) => {
     const carId = req.params.id;
     const accessoryId = req.body.accessory;
+
+    if(!req.session.hasOwnProperty('user')) {
+        return res.redirect('/login');
+    }
 
     try {
         await req.storage.attachAccessory(carId, accessoryId);

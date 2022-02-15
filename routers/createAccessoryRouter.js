@@ -3,9 +3,9 @@ const { isLoggedIn } = require('../services/util');
 
 const createAccessoryRouter = require('express').Router();
 
-createAccessoryRouter.get('/', isLoggedIn(), getAction);
-createAccessoryRouter.post('/', isLoggedIn(), createAction);
-createAccessoryRouter.get('/attach/:id', isLoggedIn(), attachIndex);
-createAccessoryRouter.post('/attach/:id', isLoggedIn(), attachCreate);
+createAccessoryRouter.get('/', getAction);
+createAccessoryRouter.post('/', createAction);
+createAccessoryRouter.get('/attach/:id', attachIndex);
+createAccessoryRouter.post('/attach/:id', attachCreate);
 
 module.exports = createAccessoryRouter;

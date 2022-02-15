@@ -23,7 +23,7 @@ const register = async(req, res) => {
 }
 
 const loginIndex = (req, res) => {
-    res.render('login', { title: 'Login'});
+    res.render('login', { title: 'Login', isValidated: true });
 }
 
 const login = async(req, res) => {
@@ -32,7 +32,7 @@ const login = async(req, res) => {
         await req.auth.loginUser(req.body.username, req.body.password);
         res.redirect('/')
     } catch(err) {
-        res.render('login', { title: 'Login', isValidated: true, username:req.body.username });
+        res.render('login', { title: 'Login', isValidated: false, username:req.body.username });
     }
 }
 

@@ -1,4 +1,3 @@
-const { register } = require('../controllers/authController');
 const User = require('../models/User');
 
 const registerUser = async (session, username, password) => {
