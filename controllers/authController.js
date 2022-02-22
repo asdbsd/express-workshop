@@ -1,24 +1,22 @@
-const { request } = require("express");
+const { validationResult } = require("express-validator");
 
 const registerIndex = (req, res) => {
-    res.render('register', { title: 'Register'});
+    res.render('register', { title: 'Register' });
 }
 
 const register = async(req, res) => {
-    console.log(req.body)
-    const validUsername = req.body.username !== '' ? req.body.username : undefined;
-    const validPassword = (req.body.password !== '' && req.body.password == req.body.repass) ? req.body.password : undefined;
-    
-    if(validUsername === undefined || validPassword === undefined) {
-        res.render('register', { title: 'Register'});
-    } 
+    const { errors } = validationResult(req);
 
     try {
+        if(errors.length > 0) {
+            throw errors;
+        }
+
         await req.auth.registerUser(req.body.username, req.body.password);
         res.redirect('/')
     } catch(err) {
-        console.log(err);
-        res.redirect('/register');
+        res.locals.errors = err
+        res.render('register', { title: 'Register', data: { username: req.body.username } });
     }
 }
 

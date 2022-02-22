@@ -106,7 +106,7 @@ button, main a.btn {
     color: white;
 }
 
-.details a.btn{
+.details a.btn {
     width: 28%;
 }
 
@@ -116,7 +116,7 @@ button:hover {
     cursor: pointer;
 }
 
-a.btn:hover{
+a.btn:hover {
     text-decoration: underline;
 }
 
@@ -230,16 +230,16 @@ span.error {
     display: block;
 }
 
-img#sadFaceImg{
+img#sadFaceImg {
     display: block;
     margin: 0 auto;
 }
 
-h2{
+h2 {
     text-align: center;
 }
 
-.accessories .accessory{
+.accessories .accessory {
     display: inline-block;
     background-color: #f3f3f2;
     width: 20%;
@@ -247,7 +247,7 @@ h2{
     margin: 1%;
 }
 
-.accessories, .italic{
+.accessories, .italic {
     text-align: center;
     font-style: italic;
 }
@@ -281,4 +281,19 @@ footer {
     to {
         opacity: 0;
     }
+}
+
+#notifications {
+    margin: 0 auto;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    text-align: center;
+    width: 50%;
+    padding: 0.5%;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    background: rgb(231, 118, 118);
+    color: white;
+    border-radius: 5px;
+    text-decoration: underline;
 }
