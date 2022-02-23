@@ -48,13 +48,24 @@ const carViewModel = (car) => {
     } 
 
     return model;
-    
 }
+
+const mapError = (error) => {
+
+    if(Array.isArray(error)) {
+        return error;
+    } else if(error.name == 'ValidationError') {
+        return Object.values(error.errors).map(e => ({ msg: e.message }));
+    } else {
+        return [ {msg: 'Request Error!'} ]
+    }
+} 
 
 module.exports = {
     accessoryViewModel,
     carViewModel,
     hashPassword,
     comparePasswords,
-    isLoggedIn
+    isLoggedIn,
+    mapError
 }

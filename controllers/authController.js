@@ -1,4 +1,5 @@
 const { validationResult } = require("express-validator");
+const { mapError } = require("../services/util");
 
 const registerIndex = (req, res) => {
     res.render('register', { title: 'Register' });
@@ -15,7 +16,7 @@ const register = async(req, res) => {
         await req.auth.registerUser(req.body.username, req.body.password);
         res.redirect('/')
     } catch(err) {
-        res.locals.errors = err
+        res.locals.errors = mapError(err);
         res.render('register', { title: 'Register', data: { username: req.body.username } });
     }
 }
@@ -30,6 +31,7 @@ const login = async(req, res) => {
         await req.auth.loginUser(req.body.username, req.body.password);
         res.redirect('/')
     } catch(err) {
+        res.locals.errors = [{ msg: err.message }];
         res.render('login', { title: 'Login', isValidated: false, username:req.body.username });
     }
 }

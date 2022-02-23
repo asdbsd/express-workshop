@@ -1,7 +1,8 @@
 const { redirect } = require("express/lib/response");
+const { mapError } = require("../services/util");
 
 const createIndex = (req, res) => {
-    res.render('Create', { title: 'Create Car Listing'});
+    res.render('create', { title: 'Create Car Listing'});
 };
 
 const createAction = async (req, res) => {
@@ -18,8 +19,8 @@ const createAction = async (req, res) => {
         await req.storage.createCar(car);
         res.redirect('/');
     } catch (err) {
-        console.log('Error creating record');
-        res.redirect('/create')
+        res.locals.errors = mapError(err);
+        res.render('create', { title: 'Create Car Listing' });
     }
     
 };

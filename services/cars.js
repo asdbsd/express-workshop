@@ -10,7 +10,7 @@ const createCar = async (car) => {
 
     } catch(err) {
         console.log(err);
-        redirect('/create');
+        throw err;
     }
 }
 
